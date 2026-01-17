@@ -10,7 +10,6 @@ function App() {
   const [inputValue, setInputValue] = useState("");
   const [list, setList] = useState([]);
   const [editIndex, setEditIndex] = useState(null);
-  const [update, setUpdate] = useState(true)
 
   function Welcome(props) {
     return <h1>{props.name}</h1>;
@@ -18,11 +17,18 @@ function App() {
 
   
 
-  function Confirm() {
-    return (<>
-    <input value = {inputValue} onChange = {(e) => setInputValue(e.target.value)}/>
-    <button onClick = {() => handleUpdate}>Confirm</button>
-    </>)
+  function handleEdit(index){
+    setEditIndex(index);
+    setInputValue(list[index]);
+  }
+
+  function handleUpdate() {
+    const updatedList = list.map((item, index) =>
+      index === editIndex ? inputValue : item
+    );
+    setList(updatedList);
+    setInputValue("");
+    setEditIndex(null);
   }
 
   function Counter() {
@@ -44,13 +50,7 @@ function App() {
     const newList = list.filter((item,i) => i != index)
     setList(newList)
   }
-  function handleUpdate(){
-    const updatedList = list.filter((item, index) =>
-    index === editIndex ? inputValue : item);
-    setInputValue("")
-    setEditIndex(null)
-    setList(updatedList)
-  }
+  
 
   return (
     <>
@@ -80,16 +80,15 @@ function App() {
       <br/>
       <input value = {inputValue} onChange = {(e) => setInputValue(e.target.value)}/>
       
-      <button onClick={handleAdd}>Add</button>
+      <button onClick={editIndex !== null ? handleUpdate : handleAdd}>
+        {editIndex !==null ? "Update" : "Add" }</button>
       
       {list.map((item, index) => (
         <div>
         <p key = {index}>{item}</p>
         <button onClick = {() => handleDelete(index)}>Delete</button>
+        <button onClick= {() => handleEdit(index)}>Edit</button>
         
-        {update ? <button onClick = {() => {setUpdate(false);
-          setEditIndex(index);
-        }}>Update</button> : <Confirm/>}
         </div>
       ))}
     </>
